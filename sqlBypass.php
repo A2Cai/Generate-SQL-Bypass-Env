@@ -1,5 +1,5 @@
 <?php include "db.php";?><?php
-        $blackList = "YTo1OntpOjA7czo1OiJzbGVlcCI7aToxO3M6NToiYXNjaWkiO2k6MjtzOjEyOiJncm91cF9jb25jYXQiO2k6MztzOjY6InN1YnN0ciI7aTo0O3M6NToidW5pb24iO30=";
+        $blackList = "YTo1OntpOjA7czoxOiIsIjtpOjE7czozOiJhbmQiO2k6MjtzOjI6Im9yIjtpOjM7czozOiJub3QiO2k6NDtzOjM6InhvciI7fQ==";
         $blackList = unserialize(base64_decode($blackList));
         function filter($str, $blackList){
             $str = strtolower($str);
@@ -17,7 +17,7 @@
             }
         }
         filter($get, $blackList);
-        $sql = "select * from users where name='". $get ."'";
+        $sql = "select * from users order by '". $get ."'";
         $db = new DB();
         $db->connect();
         $res = $db->query($sql);
@@ -33,7 +33,7 @@
     margin: 0; /* 去掉默认边距 */
     font-family: Arial, sans-serif; /* 设置字体 */
 ">
-    <div style="margin: 10px; font-size: 24px; background-color: darkorange"><b>blackList:  </b>sleep, ascii, group_concat, substr, union</div><div style="margin: 10px; font-size: 24px; background-color: yellow">
+    <div style="margin: 10px; font-size: 24px; background-color: darkorange"><b>blackList:  </b>,, and, or, not, xor</div><div style="margin: 10px; font-size: 24px; background-color: yellow">
         <?= $sql ?>
       </div>
       <div style="margin: 10px; font-size: 24px; text-align: center">

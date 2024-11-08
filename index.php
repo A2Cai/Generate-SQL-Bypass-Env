@@ -1,11 +1,17 @@
 <?php
+include "sqlRule.php";
+include "injectionPoint.php";
+
+$a = new SqlRule();
+$b = new InjectPoint();
+$sqlRuleList = array_keys($a->sqlRuleList);
+$injectionPointList = array_keys($b->injectionPointList);
 $title_text = "Generate SQL Bypass Env";
 $title = "SQL bypass";
 ?>
 
 <!DOCTYPE html>
 <html lang="zh">
-
 <!DOCTYPE html>
 <html lang="zh">
 
@@ -71,51 +77,25 @@ $title = "SQL bypass";
     <h1><?= $title_text ?></h1>
     <br />
     <div class="radio-group">
-    <label>
-        <input type="radio" name="injectionPoint[]" value="injectInNum_s"> 数字型注入 (select)
-    </label>
-    <label>
-        <input type="radio" name="injectionPoint[]" value="injectInString_s"> 字符型注入 (select)
-    </label>
-    <label>
-        <input type="radio" name="injectionPoint[]" value="injectInOrderBy_s"> order by 注入 (select)
-    </label>
-<!--    <label>-->
-<!--        <input type="radio" name="injectionPoint[]" value="injectInNum_u" disabled> 数字型注入 (update)-->
-<!--    </label>-->
-<!--    <label>-->
-<!--        <input type="radio" name="injectionPoint[]" value="injectInString_u" disabled> 字符型注入 (update)-->
-<!--    </label>-->
-<!--    <label>-->
-<!--        <input type="radio" name="injectionPoint[]" value="injectInOrderBy_u" disabled> order by 注入 (update)-->
-<!--    </label>-->
+        <?php for ($i = 0; $i < count($injectionPointList); $i++):?>
+        <?php
+        $names = explode("|", $injectionPointList[$i]);
+        echo "<label>";
+        echo '<input type="radio" name="injectionPoint[]" value="' . $names[0] . '">'. $names[1];
+        echo "</label>";
+        ?>
+        <?php endfor;?>
     </div>
     <br />
     <div class="checkbox-group">
-        <label>
-            <input type="checkbox" name="Filter[]" value="commaFilter"> 逗号过滤绕过
-        </label>
-        <label>
-            <input type="checkbox" name="Filter[]" value="spaceFilter"> 空格过滤绕过
-        </label>
-        <label>
-            <input type="checkbox" name="Filter[]" value="equalSignFilter"> 等号过滤绕过
-        </label>
-        <label>
-            <input type="checkbox" name="Filter[]" value="quotationMarkFilter"> 引号过滤绕过
-        </label>
-        <label>
-            <input type="checkbox" name="Filter[]" value="logicalOperatorFilter"> 逻辑运算符过滤绕过
-        </label>
-        <label>
-            <input type="checkbox" name="Filter[]" value="keywordFilter"> 关键词过滤绕过
-        </label>
-        <label>
-            <input type="checkbox" name="Filter[]" value="comparisonOperatorFilter"> 比较运算符过滤绕过
-        </label>
-        <label>
-            <input type="checkbox" name="Filter[]" value="functionFilter"> 函数过滤绕过
-        </label>
+        <?php for ($i = 0; $i < count($sqlRuleList); $i++):?>
+            <?php
+            $names = explode("|", $sqlRuleList[$i]);
+            echo "<label>";
+            echo '<input type="checkbox" name="Filter[]" value="' . $names[0] . '">'. $names[1];
+            echo "</label>";
+            ?>
+        <?php endfor;?>
     </div>
         <br />
         <br />

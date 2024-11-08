@@ -1,78 +1,66 @@
 <?php
+include "injectionPoint.php";
+include "sqlRule.php";
+
 class GenerateModel {
-    private $injectInNum_s = array(0, array("select * from users where id=@"));
-    private $injectInString_s = array(0, array("select * from users where name='@'"));
-    private $injectInOrderBy_s = array(0, array('select * from users order by "@"'));
-    private $commaFilter = array(0, array(','));
-    private $spaceFilter = array(0, array(' ', '\n', '\t', '\r'));
-    private $equalSignFilter = array(0, array('='));
-    private $quotationMarkFilter = array(0, array('"', "'"));
-    private $logicalOperatorFilter = array(0, array('and', 'or', 'not', 'xor'));
-    private $keywordFilter = array(0, array('users'));
-    private $comparisonOperatorFilter = array(0, array('>', '<'));
-    private $functionFilter = array(0, array('sleep', 'ascii', 'group_concat', 'substr', 'union'));
-    private $get;
+    public $injectionPoint;
+    public $sqlRule;
+    public $sqlRuleList;
+    public $injectionPointList;
 
-    public function __construct($injectionPointList = null, $filterList = null) {
-        if ($injectionPointList != null && $filterList != null) {
-            $this->checkInjectionPoint($injectionPointList);
-            $this->checkFilter($filterList);
+    public function __construct($injectionPointListByUser = null, $sqlRuleListByUser = null) {
+        if ($injectionPointListByUser != null && $sqlRuleListByUser != null) {
+            $this->sqlRule = $sqlRuleListByUser;
+            $this->injectionPoint = $injectionPointListByUser;
+            // 初始化 InjectionPoint 清单和 sqlFilter 清单
+            $injectPoint = new InjectPoint();
+            $sqlRule = new SqlRule();
+            $this->injectionPointList = $this->cleanup($injectPoint->injectionPointList);
+            $this->sqlRuleList = $this->cleanup($sqlRule->sqlRuleList);
+            // 检查传入的要求是否合法
+            $this->setInjectionPoint();
+            $this->setFilter();
         }
     }
 
-    private function checkInjectionPoint($injectionPointList){
-        $tmp = new GenerateModel();
-        foreach($injectionPointList as $injectionPoint){
-            if (property_exists($tmp, $injectionPoint)){
-                $this->{$injectionPoint}[0] = 1;
-            }
+    private function cleanup($list) {
+        $tmp = array();
+        foreach ($list as $key => $value) {
+            $tmp = array_merge($tmp, array(explode("|", $key)[0] => $value) );
         }
+        return $tmp;
     }
 
-    private function checkFilter($filterList){
-        $tmp = new GenerateModel();
-        foreach($filterList as $filter){
-            if (property_exists($tmp, $filter)){
-                $this->{$filter}[0] = 1;
-            }
-        }
-    }
-
-    public function getBlackListAndSql($generate){
-        $blackList = array();
-        $objectVars = get_object_vars($generate);
-        foreach($objectVars as $objectVar){
-            if (!is_array($objectVar)){
-                continue;
-            }
-            foreach($objectVar as $key => $value){
-                if ($key === 0 and $value === 0){
+    private function setInjectionPoint(){
+        foreach ($this->injectionPointList as $injectionPoint=>$value) {
+            foreach ($this->injectionPoint as $injectionPointByUser=>$valueByUser) {
+                if ($injectionPoint != $valueByUser){
+                    continue;
+                }else{
+                    $this->injectionPoint = $this->injectionPointList[$valueByUser];
                     break;
                 }
-                if($key === 1){
-                    $blackList = array_merge($blackList, $value);
+            }
+        }
+    }
+
+    private function setFilter(){
+        $tmp = array();
+        foreach ($this->sqlRuleList as $sqlRule=>$value) {
+            foreach ($this->sqlRule as $sqlRuleByUser => $valueByUser) {
+                if ($sqlRule != $valueByUser){
+                    continue;
+                }else{
+                    $tmp = array_merge($tmp, $this->sqlRuleList[$valueByUser]);
                 }
-
             }
         }
-        $sql = array_shift($blackList);
-        return array($sql, $blackList);
+        $this->sqlRule = $tmp;
     }
 
-    public function getGetReq($arr){
-        $this->get = empty($arr) ? 1 : $arr;
-        if ( $this->get != 1){
-            foreach ($_GET as $key => $value) {
-                $this->get = $value;
-                break;
-            }
-        }
-    }
-
-    public function render($data){
-
-        $sql = $data[0];
-        $blackList = $data[1];
+    public function render(){
+        $sql = $this->injectionPoint;
+        $blackList = $this->sqlRule;
         $sql = explode("@", $sql);
         $f = fopen("sqlBypass.php", "w");
 

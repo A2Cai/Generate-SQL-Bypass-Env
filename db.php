@@ -28,7 +28,7 @@ class DB
         $result = $this->conn->query($sql);
 
         if (!$result) {
-            die("Query failed: " . $this->conn->error);
+            die("<h2 style='background-color: yellow'>Query SQL: " . $sql . "</h2><br />Query failed: " . $this->conn->error);
         }
 
         return $result;
