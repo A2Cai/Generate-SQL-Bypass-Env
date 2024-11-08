@@ -1,5 +1,5 @@
 <?php include "db.php";?><?php
-        $blackList = "YTo1OntpOjA7czoxOiIsIjtpOjE7czozOiJhbmQiO2k6MjtzOjI6Im9yIjtpOjM7czozOiJub3QiO2k6NDtzOjM6InhvciI7fQ==";
+        $blackList = "YTo3OntpOjA7czoxOiIgIjtpOjE7czoyOiJcbiI7aToyO3M6MjoiXHQiO2k6MztzOjI6IlxyIjtpOjQ7czoxOiI9IjtpOjU7czoxOiI+IjtpOjY7czoxOiI8Ijt9";
         $blackList = unserialize(base64_decode($blackList));
         function filter($str, $blackList){
             $str = strtolower($str);
@@ -33,7 +33,7 @@
     margin: 0; /* 去掉默认边距 */
     font-family: Arial, sans-serif; /* 设置字体 */
 ">
-    <div style="margin: 10px; font-size: 24px; background-color: darkorange"><b>blackList:  </b>,, and, or, not, xor</div><div style="margin: 10px; font-size: 24px; background-color: yellow">
+    <div style="margin: 10px; font-size: 24px; background-color: darkorange"><b>blackList:  </b> , \n, \t, \r, =, >, <</div><div style="margin: 10px; font-size: 24px; background-color: yellow">
         <?= $sql ?>
       </div>
       <div style="margin: 10px; font-size: 24px; text-align: center">

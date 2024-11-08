@@ -1,7 +1,7 @@
 <?php
 class SqlRule {
     public $sqlRuleList = array(
-    /* Format: name => array(blacklist for input);
+    /* Format: name|show_name => array(blacklist for input);
     [Every string will transform to lowercase automatically]
     */
     "commaFilter|逗号过滤绕过" => array(','),

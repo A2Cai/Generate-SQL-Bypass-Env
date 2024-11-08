@@ -8,7 +8,6 @@ class DB
     private $database = "bypass";
     private $conn;
 
-    // Constructor for connecting to the database
     public function __construct()
     {
         $this->connect();
